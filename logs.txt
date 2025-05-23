@@ -1,0 +1,5 @@
+- Error: Payment service failed due to timeout at 14:05 UTC
+- User reported broken checkout after clicking 'Place Order'
+- Database connection refused for user_id=1204
+- Payment gateway returned code 503
+- "Cart gets stuck" issue raised on mobile app, affecting Android 12 users
