@@ -15,7 +15,7 @@ ollama pull nomic-text-embed
 uv venv
 source .venv/bin/activate  
 uv init
-uv add ollama numpy scikit-learn
+uv add ollama numpy scikit-learn faiss-cpu
 
 uv run 1.similarity.py
 ```
