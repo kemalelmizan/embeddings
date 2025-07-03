@@ -1,5 +1,6 @@
 import numpy as np
 import ollama
+import time
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
@@ -40,14 +41,19 @@ def main():
 
     query = "What book features a dragon and an epic journey?"
 
-    print(f"🔎 Query: {query}\n")
+    print(f"\U0001F50E Query: {query}\n")
 
+    start_time = time.time()
     best_idx, similarities = find_most_similar(query, documents)
+    elapsed = time.time() - start_time
     best_doc = documents[best_idx]
+    total_tokens = sum(len(d.split()) for d in documents) + len(query.split())
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
 
-    print("📄 Most Similar Document:")
+    print("\U0001F4C4 Most Similar Document:")
     print(f"  {best_doc}")
     print(f"  (Similarity Score: {similarities[best_idx]:.4f})")
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
     explanation = explain_match(query, best_doc)
     print("\n💬 Gemma's Explanation:\n", explanation)

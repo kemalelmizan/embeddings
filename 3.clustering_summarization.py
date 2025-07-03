@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.cluster import KMeans
 import ollama
+import time
 
 # Step 1: Embed texts using nomic-embed-text
 def embed(texts, model="nomic-embed-text"):
@@ -35,14 +36,19 @@ def main():
         "The Lord of the Rings is a high fantasy trilogy by Tolkien.",
     ]
 
+    start_time = time.time()
     clusters = cluster_texts(documents, n_clusters=3)
+    elapsed = time.time() - start_time
+    total_tokens = sum(len(d.split()) for d in documents)
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
 
     for i, group in clusters.items():
-        print(f"\n🧠 Cluster {i+1} ({len(group)} items):")
+        print(f"\n\U0001F9E0 Cluster {i+1} ({len(group)} items):")
         for doc in group:
             print(f"  - {doc}")
         summary = summarize(group)
-        print(f"📝 Summary: {summary}")
+        print(f"\U0001F4DD Summary: {summary}")
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
 if __name__ == "__main__":
     main()

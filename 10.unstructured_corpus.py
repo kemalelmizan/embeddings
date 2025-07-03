@@ -1,6 +1,7 @@
 import numpy as np
 import faiss
 import ollama
+import time
 
 def embed(texts, model="nomic-embed-text"):
     res = ollama.embed(model=model, input=texts)
@@ -36,17 +37,21 @@ def main():
 
     query = "Why are customers complaining about failed checkouts?"
 
+    start_time = time.time()
     corpus_vecs = embed(raw_logs)
     index = build_index(corpus_vecs)
     query_vec = embed([query])
-
     match, score = retrieve(query, index, query_vec, raw_logs)
     response = explain_with_gemma(query, match)
+    elapsed = time.time() - start_time
+    total_tokens = sum(len(l.split()) for l in raw_logs) + len(query.split())
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
 
     print(f"User Query: {query}")
     print(f"\nMatched Log (score {score:.4f}): {match}")
     print("\nAI Explanation:")
     print(response)
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
 if __name__ == "__main__":
     main()

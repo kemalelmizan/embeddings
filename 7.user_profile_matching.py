@@ -1,5 +1,6 @@
 import numpy as np
 import ollama
+import time
 
 def embed(texts, model="nomic-embed-text"):
     res = ollama.embed(model=model, input=texts)
@@ -49,19 +50,18 @@ def main():
         "Seeking software engineer to manage backend and frontend APIs."
     ]
 
-    matches = match_users_to_profiles(users, profiles)
+    start_time = time.time()
+    results = match_users_to_profiles(users, profiles)
+    elapsed = time.time() - start_time
+    total_tokens = sum(len(u.split()) for u in users) + sum(len(p.split()) for p in profiles)
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
 
-    for match in matches:
-        user_text = users[match["user_idx"]]
-        profile_text = profiles[match["profile_idx"]]
-        score = match["score"]
-
-        print(f"👤 User: {user_text}")
-        print(f"✅ Best Match (score {score:.4f}): {profile_text}")
-
-        explanation = explain_match(user_text, profile_text)
-        print("💬 Explanation:\n", explanation)
-        print("-" * 80)
+    for result in results:
+        user_idx = result["user_idx"]
+        profile_idx = result["profile_idx"]
+        score = result["score"]
+        print(f"User {user_idx+1} best matches Profile {profile_idx+1} (score {score:.4f})")
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
 if __name__ == "__main__":
     main()

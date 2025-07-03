@@ -1,6 +1,7 @@
 import numpy as np
 import ollama
 from itertools import combinations
+import time
 
 def embed(texts, model="nomic-embed-text"):
     res = ollama.embed(model=model, input=texts)
@@ -39,20 +40,26 @@ def main():
         "The iPhone 14 Pro was released with a stainless steel frame.",
     ]
 
-    print("🔍 Finding near-duplicates...\n")
+    print("\U0001F50D Finding near-duplicates...\n")
+    start_time = time.time()
     pairs = find_near_duplicates(texts)
+    elapsed = time.time() - start_time
+    total_tokens = sum(len(t.split()) for t in texts)
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
 
     if not pairs:
         print("No near-duplicates found.")
+        print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
         return
 
     for i, j, score in pairs:
-        print(f"🧠 Match: {score:.4f}")
+        print(f"\U0001F9E0 Match: {score:.4f}")
         print(f"Text A: {texts[i]}")
         print(f"Text B: {texts[j]}")
         explanation = explain_difference(texts[i], texts[j])
         print("💬 Differences:\n", explanation)
         print("-" * 80)
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
 if __name__ == "__main__":
     main()

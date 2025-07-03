@@ -1,5 +1,6 @@
 import ollama
 import numpy as np
+import time
 
 def embed(texts, model="nomic-embed-text"):
     res = ollama.embed(model=model, input=texts)
@@ -25,10 +26,15 @@ def main():
         "Emma is another romance by Jane Austen exploring matchmaking in English society.",
     ]
 
-    # Optionally: group similar docs first (e.g. by cosine similarity or clustering)
-    print("🔍 Generating tags for entire collection:\n")
+    start_time = time.time()
     tags = generate_tags(documents)
+    elapsed = time.time() - start_time
+    total_tokens = sum(len(d.split()) for d in documents)
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
+
+    print("\U0001F50D Generating tags for entire collection:\n")
     print("Generated Tags:\n", tags)
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
 if __name__ == "__main__":
     main()

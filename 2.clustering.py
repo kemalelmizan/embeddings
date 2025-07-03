@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.cluster import KMeans
 import ollama
+import time
 
 def embed(texts, model="nomic-embed-text"):
     res = ollama.embed(model=model, input=texts)
@@ -27,11 +28,17 @@ def main():
         "Emma is another romantic novel by Jane Austen.",
     ]
 
+    start_time = time.time()
     clustered = cluster_texts(texts, n_clusters=3)
+    elapsed = time.time() - start_time
+    total_tokens = sum(len(t.split()) for t in texts)
+    tokens_per_sec = total_tokens / elapsed if elapsed > 0 else float('inf')
+
     for cluster_id, items in clustered.items():
         print(f"\nCluster {cluster_id + 1}:")
         for item in items:
             print(f"  - {item}")
+    print(f"\nTime taken: {elapsed:.4f} seconds for {total_tokens} tokens ({tokens_per_sec:.2f} tokens/sec)")
 
 if __name__ == "__main__":
     main()
