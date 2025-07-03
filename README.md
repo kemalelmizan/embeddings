@@ -13,9 +13,10 @@ ollama pull nomic-text-embed
 2. Install [uv](https://docs.astral.sh/uv/#installation), then
 ```
 uv venv
-source .venv/bin/activate  
-uv init
+source .venv/bin/activate
 uv add ollama numpy scikit-learn faiss-cpu
 
 uv run 1.similarity.py
+
+deactivate
 ```
